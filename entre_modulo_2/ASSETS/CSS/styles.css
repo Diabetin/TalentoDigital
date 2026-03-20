@@ -12,6 +12,13 @@ body {
     overflow-x: hidden;
 }
 
+/* Contenedor afectado por el plugin Starfield */
+#space-bg {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
 .navbar {
     background: rgba(13, 17, 23, 0.95) !important;
     backdrop-filter: blur(10px);
@@ -35,7 +42,7 @@ header,
 }
 
 .hero-section {
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300"><defs><radialGradient id="star1" cx="10%" cy="20%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.8"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="100" cy="60" r="2" fill="url(%23star1)"/><circle cx="800" cy="100" r="1.5" fill="%23ffffff"/><circle cx="300" cy="250" r="1" fill="%23ffffff"/></svg>') center/cover no-repeat;
+    background: none; /* el fondo estelar ya lo da Starfield */
     min-height: 60vh;
     display: flex;
     align-items: center;

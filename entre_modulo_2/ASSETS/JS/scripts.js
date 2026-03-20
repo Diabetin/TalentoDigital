@@ -41,15 +41,15 @@ const productos = [
     }
 ];
 
-// Carrito
+// Carrito en localStorage
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-// Render productos (solo en index.html)
+// Render productos (grilla Bootstrap)
 function renderizarProductos() {
-    const container = $('#productos-container');
-    if (!container.length) return;
+    const $container = $('#productos-container');
+    if (!$container.length) return;
 
-    container.empty();
+    $container.empty();
     productos.forEach(producto => {
         const card = `
             <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="${producto.id * 100}">
@@ -72,11 +72,22 @@ function renderizarProductos() {
                 </article>
             </div>
         `;
-        container.append(card);
+        $container.append(card);
     });
 }
 
-// Dropdown navbar
+// Badge carrito
+function actualizarContadorCarrito() {
+    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    const badge = document.querySelector('#cart-count');
+    if (!badge) return;
+
+    badge.textContent = totalItems;
+    if (totalItems > 0) badge.classList.add('animate__pulse');
+    else badge.classList.remove('animate__pulse');
+}
+
+// Dropdown carrito
 function renderizarDropdownCarrito() {
     const container = $('#dropdown-carrito');
     if (!container.length) return;
@@ -148,15 +159,7 @@ function renderizarDropdownCarrito() {
     container.html(html);
 }
 
-// Contador badge
-function actualizarContadorCarrito() {
-    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-    $('#cart-count')
-        .text(totalItems)
-        .toggleClass('animate__pulse', totalItems > 0);
-}
-
-// Carrito completo (solo en carrito.html)
+// Carrito completo
 function renderizarCarrito() {
     const container = $('#carrito-container');
     if (!container.length) return;
@@ -172,7 +175,8 @@ function renderizarCarrito() {
                 </div>
             </div>
         `);
-        $('#total-price').text('0');
+        const totalSpan = document.querySelector('#total-price');
+        if (totalSpan) totalSpan.textContent = '0';
         return;
     }
 
@@ -180,7 +184,7 @@ function renderizarCarrito() {
     carrito.forEach(item => {
         html += `
             <div class="col-12">
-                <div class="card bg-dark text-white">
+                <article class="card bg-dark text-white">
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-4 col-md-3">
@@ -202,17 +206,18 @@ function renderizarCarrito() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             </div>
         `;
     });
     html += '</div>';
     
     container.html(html);
-    $('#total-price').text(total.toLocaleString());
+    const totalSpan = document.querySelector('#total-price');
+    if (totalSpan) totalSpan.textContent = total.toLocaleString();
 }
 
-// Detalle de producto (solo en detalle.html)
+// Detalle de producto
 function renderizarDetalleProducto() {
     const container = $('#detalle-producto');
     if (!container.length) return;
@@ -252,9 +257,9 @@ function renderizarDetalleProducto() {
     `);
 }
 
-// Eventos globales
+// Eventos
 $(document).ready(function() {
-    // Scroll suave solo para anclas reales
+    // Scroll suave anclas
     $('a[href^="#"]').on('click', function(e) {
         const href = $(this).attr('href');
         if (href.startsWith('#') && href.length > 1) {
@@ -268,24 +273,21 @@ $(document).ready(function() {
         }
     });
 
-    // Render inicial según la página
+    // Render inicial
     renderizarProductos();
     renderizarDetalleProducto();
+    renderizarCarrito();
     actualizarContadorCarrito();
     renderizarDropdownCarrito();
-    renderizarCarrito();
 
-    // Agregar al carrito (home o detalle)
+    // Agregar carrito
     $(document).on('click', '.agregar-carrito', function() {
         const id = parseInt($(this).data('id'));
         const producto = productos.find(p => p.id === id);
         
         const itemExistente = carrito.find(item => item.id === id);
-        if (itemExistente) {
-            itemExistente.cantidad += 1;
-        } else {
-            carrito.push({ ...producto, cantidad: 1 });
-        }
+        if (itemExistente) itemExistente.cantidad++;
+        else carrito.push({ ...producto, cantidad: 1 });
         
         localStorage.setItem('carrito', JSON.stringify(carrito));
         actualizarContadorCarrito();
@@ -300,7 +302,7 @@ $(document).ready(function() {
             });
     });
 
-    // Incrementar / Decrementar / Eliminar / Vaciar (solo funcionan donde existan los elementos)
+    // Incrementar / Decrementar / Eliminar
     $(document).on('click', '.incrementar', function() {
         const id = parseInt($(this).data('id'));
         const item = carrito.find(item => item.id === id);
@@ -316,9 +318,7 @@ $(document).ready(function() {
         const item = carrito.find(item => item.id === id);
         if (item) {
             item.cantidad--;
-            if (item.cantidad <= 0) {
-                carrito = carrito.filter(i => i.id !== id);
-            }
+            if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== id);
         }
         localStorage.setItem('carrito', JSON.stringify(carrito));
         renderizarCarrito();
@@ -335,11 +335,23 @@ $(document).ready(function() {
         actualizarContadorCarrito();
     });
 
-    $('#vaciar-carrito').on('click', function() {
-        carrito = [];
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        renderizarCarrito();
-        renderizarDropdownCarrito();
-        actualizarContadorCarrito();
-    });
+    const btnVaciar = document.querySelector('#vaciar-carrito');
+    if (btnVaciar) {
+        btnVaciar.addEventListener('click', () => {
+            carrito = [];
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            renderizarCarrito();
+            renderizarDropdownCarrito();
+            actualizarContadorCarrito();
+        });
+    }
+
+    // Fondo espacial con jQuery Starfield en todas las páginas
+    if ($('#space-bg').length && typeof $.fn.starfield === 'function') {
+        $('#space-bg').starfield({
+            starDensity: 1.5,
+            mouseScale: 0.5,
+            seedMovement: true
+        });
+    }
 });
