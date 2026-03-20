@@ -11,36 +11,40 @@ const productos = [
         id: 1,
         nombre: "Nave X-1 Interceptor",
         precio: 299900,
-        imagen: "https://via.placeholder.com/300x200/58a6ff/ffffff?text=X-1",
-        descripcion: "Nave ligera para misiones rápidas. Velocidad máxima: 0.9c"
+        imagen: "https://via.placeholder.com/600x400/58a6ff/ffffff?text=X-1",
+        descripcion: "Nave ligera para misiones rápidas. Velocidad máxima: 0.9c",
+        detallesLargos: "La X-1 Interceptor está diseñada para misiones tácticas de alta velocidad dentro del sistema solar. Cabina para 1 piloto, motor de curvatura ligera y blindaje de carbono reforzado."
     },
     {
         id: 2,
         nombre: "Crucero Nova Prime",
         precio: 1250000,
-        imagen: "https://via.placeholder.com/300x200/79c0ff/000000?text=Nova+Prime",
-        descripcion: "Nave familiar con capacidad para 12 tripulantes. Ideal para colonización."
+        imagen: "https://via.placeholder.com/600x400/79c0ff/000000?text=Nova+Prime",
+        descripcion: "Nave familiar con capacidad para 12 tripulantes. Ideal para colonización.",
+        detallesLargos: "El Crucero Nova Prime incluye dormitorios modulares, sistema de soporte vital de larga duración y hangar para 2 naves auxiliares. Perfecto para colonias en expansión."
     },
     {
         id: 3,
         nombre: "Destructor Orion",
         precio: 4500000,
-        imagen: "https://via.placeholder.com/300x200/ff6b6b/ffffff?text=Orion",
-        descripcion: "Potencia de fuego impresionante. Perfecta para defensa planetaria."
+        imagen: "https://via.placeholder.com/600x400/ff6b6b/ffffff?text=Orion",
+        descripcion: "Potencia de fuego impresionante. Perfecta para defensa planetaria.",
+        detallesLargos: "El Destructor Orion cuenta con cañones de iones, escudos deflectores de última generación y sistema de radares de alcance interplanetario."
     },
     {
         id: 4,
         nombre: "Explorador Zeta",
         precio: 850000,
-        imagen: "https://via.placeholder.com/300x200/51cf66/ffffff?text=Zeta",
-        descripcion: "Diseñada para exploración profunda. Sensores de última generación."
+        imagen: "https://via.placeholder.com/600x400/51cf66/ffffff?text=Zeta",
+        descripcion: "Diseñada para exploración profunda. Sensores de última generación.",
+        detallesLargos: "Explorador de largo alcance equipado con laboratorio científico, drones de reconocimiento y sensores de materia oscura."
     }
 ];
 
 // Carrito
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
-// Render productos (solo si existe #productos-container, es decir en index.html)
+// Render productos (solo en index.html)
 function renderizarProductos() {
     const container = $('#productos-container');
     if (!container.length) return;
@@ -48,17 +52,22 @@ function renderizarProductos() {
     container.empty();
     productos.forEach(producto => {
         const card = `
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="${producto.id * 100}">
+            <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="${producto.id * 100}">
                 <article class="card product-card h-100 text-center">
                     <img src="${producto.imagen}" class="card-img-top" alt="${producto.nombre}"
                          style="height: 200px; object-fit: cover;">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">${producto.nombre}</h5>
                         <p class="card-text">${producto.descripcion}</p>
-                        <p class="text-success fw-bold fs-4 mb-3">$${producto.precio.toLocaleString()}</p>
-                        <button class="btn btn-primary w-100 agregar-carrito" data-id="${producto.id}">
-                            Agregar al Carrito 🚀
-                        </button>
+                        <p class="text-success fw-bold fs-5 mb-3">$${producto.precio.toLocaleString()}</p>
+                        <div class="mt-auto d-grid gap-2">
+                            <button class="btn btn-primary agregar-carrito" data-id="${producto.id}">
+                                Agregar al Carrito 🚀
+                            </button>
+                            <a href="detalle.html?id=${producto.id}" class="btn btn-outline-light">
+                                Ver más
+                            </a>
+                        </div>
                     </div>
                 </article>
             </div>
@@ -147,7 +156,7 @@ function actualizarContadorCarrito() {
         .toggleClass('animate__pulse', totalItems > 0);
 }
 
-// Carrito completo (solo si existe #carrito-container, es decir en carrito.html)
+// Carrito completo (solo en carrito.html)
 function renderizarCarrito() {
     const container = $('#carrito-container');
     if (!container.length) return;
@@ -174,20 +183,20 @@ function renderizarCarrito() {
                 <div class="card bg-dark text-white">
                     <div class="card-body">
                         <div class="row align-items-center">
-                            <div class="col-3">
+                            <div class="col-4 col-md-3">
                                 <img src="${item.imagen}" class="img-fluid rounded" alt="${item.nombre}">
                             </div>
-                            <div class="col-6">
+                            <div class="col-8 col-md-6">
                                 <h6>${item.nombre}</h6>
-                                <p>$${item.precio.toLocaleString()}</p>
+                                <p class="mb-1">$${item.precio.toLocaleString()}</p>
                             </div>
-                            <div class="col-3 text-end">
-                                <div class="input-group input-group-sm">
+                            <div class="col-12 col-md-3 text-end mt-2 mt-md-0">
+                                <div class="input-group input-group-sm mb-1">
                                     <button class="btn btn-outline-secondary decrementar" data-id="${item.id}">-</button>
                                     <input type="number" class="form-control text-center" value="${item.cantidad}" readonly>
                                     <button class="btn btn-outline-secondary incrementar" data-id="${item.id}">+</button>
                                 </div>
-                                <button class="btn btn-sm btn-outline-danger mt-1 eliminar-item" data-id="${item.id}">
+                                <button class="btn btn-sm btn-outline-danger eliminar-item" data-id="${item.id}">
                                     Eliminar
                                 </button>
                             </div>
@@ -203,9 +212,49 @@ function renderizarCarrito() {
     $('#total-price').text(total.toLocaleString());
 }
 
-// Eventos
+// Detalle de producto (solo en detalle.html)
+function renderizarDetalleProducto() {
+    const container = $('#detalle-producto');
+    if (!container.length) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const id = parseInt(params.get('id'));
+    const producto = productos.find(p => p.id === id);
+
+    if (!producto) {
+        container.html(`
+            <div class="col-12 text-center py-5">
+                <h3 class="mb-3">Producto no encontrado</h3>
+                <a href="index.html#productos" class="btn btn-primary">Volver a productos</a>
+            </div>
+        `);
+        return;
+    }
+
+    container.html(`
+        <div class="col-12 col-lg-6" data-aos="fade-right">
+            <img src="${producto.imagen}" alt="${producto.nombre}" class="img-fluid rounded shadow">
+        </div>
+        <div class="col-12 col-lg-6" data-aos="fade-left">
+            <h1 class="mb-3">${producto.nombre}</h1>
+            <p class="lead">${producto.descripcion}</p>
+            <p>${producto.detallesLargos}</p>
+            <h3 class="text-success fw-bold mb-4">$${producto.precio.toLocaleString()}</h3>
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-primary agregar-carrito" data-id="${producto.id}">
+                    Agregar al Carrito 🚀
+                </button>
+                <a href="index.html#productos" class="btn btn-outline-light">
+                    Volver a productos
+                </a>
+            </div>
+        </div>
+    `);
+}
+
+// Eventos globales
 $(document).ready(function() {
-    // Scroll suave solo cuando el href es ancla en la misma página
+    // Scroll suave solo para anclas reales
     $('a[href^="#"]').on('click', function(e) {
         const href = $(this).attr('href');
         if (href.startsWith('#') && href.length > 1) {
@@ -219,13 +268,14 @@ $(document).ready(function() {
         }
     });
 
-    // Render inicial
+    // Render inicial según la página
     renderizarProductos();
+    renderizarDetalleProducto();
     actualizarContadorCarrito();
     renderizarDropdownCarrito();
     renderizarCarrito();
 
-    // Agregar al carrito
+    // Agregar al carrito (home o detalle)
     $(document).on('click', '.agregar-carrito', function() {
         const id = parseInt($(this).data('id'));
         const producto = productos.find(p => p.id === id);
@@ -250,7 +300,7 @@ $(document).ready(function() {
             });
     });
 
-    // Incrementar
+    // Incrementar / Decrementar / Eliminar / Vaciar (solo funcionan donde existan los elementos)
     $(document).on('click', '.incrementar', function() {
         const id = parseInt($(this).data('id'));
         const item = carrito.find(item => item.id === id);
@@ -261,7 +311,6 @@ $(document).ready(function() {
         actualizarContadorCarrito();
     });
 
-    // Decrementar
     $(document).on('click', '.decrementar', function() {
         const id = parseInt($(this).data('id'));
         const item = carrito.find(item => item.id === id);
@@ -277,7 +326,6 @@ $(document).ready(function() {
         actualizarContadorCarrito();
     });
 
-    // Eliminar
     $(document).on('click', '.eliminar-item', function() {
         const id = parseInt($(this).data('id'));
         carrito = carrito.filter(item => item.id !== id);
@@ -287,7 +335,6 @@ $(document).ready(function() {
         actualizarContadorCarrito();
     });
 
-    // Vaciar (solo existe en carrito.html)
     $('#vaciar-carrito').on('click', function() {
         carrito = [];
         localStorage.setItem('carrito', JSON.stringify(carrito));
