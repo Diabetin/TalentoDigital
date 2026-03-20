@@ -11,7 +11,7 @@ const productos = [
         id: 1,
         nombre: "Nave X-1 Interceptor",
         precio: 299900,
-        imagen: "https://via.placeholder.com/600x400/58a6ff/ffffff?text=X-1",
+        imagen: "https://im.ziffdavisinternational.com/ign_es/screenshot/default/normandysr2b_29eu.jpg",
         descripcion: "Nave ligera para misiones rápidas. Velocidad máxima: 0.9c",
         detallesLargos: "La X-1 Interceptor está diseñada para misiones tácticas de alta velocidad dentro del sistema solar. Cabina para 1 piloto, motor de curvatura ligera y blindaje de carbono reforzado."
     },
@@ -19,7 +19,7 @@ const productos = [
         id: 2,
         nombre: "Crucero Nova Prime",
         precio: 1250000,
-        imagen: "https://via.placeholder.com/600x400/79c0ff/000000?text=Nova+Prime",
+        imagen: "https://fotografias-neox.atresmedia.com/clipping/cmsimages01/2016/04/15/979CC3AE-529D-454E-B0DB-28E2734F8F11/97.jpg?crop=1920,1080,x0,y0&width=1600&height=900&optimize=high&format=webply",
         descripcion: "Nave familiar con capacidad para 12 tripulantes. Ideal para colonización.",
         detallesLargos: "El Crucero Nova Prime incluye dormitorios modulares, sistema de soporte vital de larga duración y hangar para 2 naves auxiliares. Perfecto para colonias en expansión."
     },
@@ -27,7 +27,7 @@ const productos = [
         id: 3,
         nombre: "Destructor Orion",
         precio: 4500000,
-        imagen: "https://via.placeholder.com/600x400/ff6b6b/ffffff?text=Orion",
+        imagen: "https://i.blogs.es/e8f854/c8724475-496f-46d2-9f97-3a13d08e778c/1366_2000.jpg",
         descripcion: "Potencia de fuego impresionante. Perfecta para defensa planetaria.",
         detallesLargos: "El Destructor Orion cuenta con cañones de iones, escudos deflectores de última generación y sistema de radares de alcance interplanetario."
     },
@@ -35,7 +35,7 @@ const productos = [
         id: 4,
         nombre: "Explorador Zeta",
         precio: 850000,
-        imagen: "https://via.placeholder.com/600x400/51cf66/ffffff?text=Zeta",
+        imagen: "https://cinepremiere.com.mx/assets/images/Blogs/LadoObscuroSala/2013/Agostodieciseisonce.jpg",
         descripcion: "Diseñada para exploración profunda. Sensores de última generación.",
         detallesLargos: "Explorador de largo alcance equipado con laboratorio científico, drones de reconocimiento y sensores de materia oscura."
     }
@@ -354,4 +354,63 @@ $(document).ready(function() {
             seedMovement: true
         });
     }
+        // ========================
+    // Nave espacial aleatoria
+    // ========================
+    function lanzarNaveAleatoria() {
+        const $ship = $('#spaceship');
+        if (!$ship.length) return;
+
+        const anchoVentana = $(window).width();
+        const altoVentana  = $(window).height();
+
+        // Altura aleatoria entre 10% y 80% de la pantalla
+        const topRandom = (Math.random() * 70 + 10); // %
+        // Dirección aleatoria: 0 = izquierda→derecha, 1 = derecha→izquierda
+        const direccion = Math.random() < 0.5 ? 'left-right' : 'right-left';
+        // Duración aleatoria entre 8 y 14 segundos
+        const duracion = (Math.random() * 6000) + 8000;
+
+        if (direccion === 'left-right') {
+            $ship.removeClass('flip'); // mira hacia la derecha
+            $ship
+                .stop(true, true)
+                .css({
+                    top: topRandom + 'vh',
+                    left: -100
+                })
+                .animate(
+                    { left: anchoVentana + 100 },
+                    duracion,
+                    'linear',
+                    function() {
+                        $(this).css('left', -100);
+                    }
+                );
+        } else {
+            $ship.addClass('flip'); // mira hacia la izquierda
+            $ship
+                .stop(true, true)
+                .css({
+                    top: topRandom + 'vh',
+                    left: anchoVentana + 100
+                })
+                .animate(
+                    { left: -100 },
+                    duracion,
+                    'linear',
+                    function() {
+                        $(this).css('left', anchoVentana + 100);
+                    }
+                );
+        }
+    }
+
+    // Lanzar primera vez al cargar
+    lanzarNaveAleatoria();
+    // Volar de nuevo cada 15–25 segundos de forma aleatoria
+    setInterval(function() {
+        lanzarNaveAleatoria();
+    }, Math.floor(Math.random() * 10000) + 15000);
+
 });
